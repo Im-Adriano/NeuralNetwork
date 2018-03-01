@@ -15,6 +15,8 @@ public class CarMovement : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
     }
 
+
+
     void FixedUpdate()
     {
         if (!Crash)
