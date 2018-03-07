@@ -8,6 +8,7 @@ public class CarMovement : MonoBehaviour {
     [SerializeField] int fitness = 0;
     public float MaxSpeed;
     public float steering;
+    NeuralNetwork brain;
     
     private Rigidbody2D rb;
     Vector2 start;
@@ -17,6 +18,7 @@ public class CarMovement : MonoBehaviour {
     {
         rb = GetComponent<Rigidbody2D>();
         start = transform.position;
+        brain = GetComponent<NeuralNetwork>();
     }
 
 
@@ -25,7 +27,9 @@ public class CarMovement : MonoBehaviour {
     {
         if (!Crash)
         {
-            float h = -Input.GetAxis("Horizontal");
+            float[] temp = { 1f, 2f, 20f, 10f, 8f };
+            float h = (brain.Compute(brain.Normalize(temp)) );
+            print(h);
             float v = 1;
 
             Vector2 speed = transform.up * v * MaxSpeed;

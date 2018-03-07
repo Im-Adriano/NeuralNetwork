@@ -1,47 +1,55 @@
 ﻿using UnityEngine;
 using System;
 
-public class NeuralNetwork : MonoBehaviour {
+public class NeuralNetwork : MonoBehaviour
+{
 
-    float[][] layers;
-    float[][][] weights;
-    float[][] biases;
+    private float[][] layers;
+    private float[][][] NeuronWeights;
+    private float[][] BiasWeights;
+    float BiasNeuron;
 
     int hiddenLayers = 1;
     int inputNum = 5;
     int hiddenLayerSize = 4;
     int outputNum = 1;
-    System.Random rand = new System.Random();
+    public RandomNumGene generator;
+    System.Random rand;
 
     // Use this for initialization
-    void Start () {
-        int[][] layers = new int[hiddenLayers+2][];
-        layers[0] = new int[inputNum];
-        
+    void Awake()
+    {
+        rand = generator.rand;
+        BiasNeuron = 1;
+        layers = new float[hiddenLayers + 2][];
+        layers[0] = new float[inputNum];
 
-        for(int i = 1; i <= hiddenLayers; i++)
+
+        for (int i = 1; i <= hiddenLayers; i++)
         {
-            layers[i] = new int[hiddenLayerSize];
+            layers[i] = new float[hiddenLayerSize];
         }
 
-        layers[layers.Length - 1] = new int[outputNum];
-
+        layers[layers.Length - 1] = new float[outputNum];
+        
         InitWeights();
         InitBiases();
 
-	}
-	
+    }
+
     void InitWeights()
     {
-        for (int i = 0; i < hiddenLayers + 1; i++)
+        NeuronWeights = new float[hiddenLayers + 1][][];
+        for (int i = 0; i <= hiddenLayers; i++)
         {
-            weights[i] = new float[layers[i + 1].Length][];
-            for(int j = 0; j < layers[i + 1].Length; j++)
+            print(i);
+            NeuronWeights[i] = new float[layers[i + 1].Length][];
+            for (int j = 0; j < layers[i + 1].Length; j++)
             {
-                weights[i][j] = new float[layers[i].Length];
-                for(int k = 0; k < layers[i].Length; k++)
+                NeuronWeights[i][j] = new float[layers[i].Length];
+                for (int k = 0; k < layers[i].Length; k++)
                 {
-                    weights[i][j][k] = (float)(rand.NextDouble() * 2) - 1;
+                    NeuronWeights[i][j][k] = (float)(rand.NextDouble() * 2) - 1;
                 }
             }
         }
@@ -49,12 +57,13 @@ public class NeuralNetwork : MonoBehaviour {
 
     void InitBiases()
     {
-        for (int i = 0; i < hiddenLayers + 1; i++)
+        BiasWeights = new float[hiddenLayers + 1][];
+        for (int i = 0; i <= hiddenLayers; i++)
         {
-            biases[i] = new float[layers[i+1].Length - 1];
-            for (int j = 0; j < layers[i+1].Length; j++)
+            BiasWeights[i] = new float[layers[i + 1].Length];
+            for (int j = 0; j < layers[i + 1].Length; j++)
             {
-                biases[i][j] = (float)(rand.NextDouble() - .5);
+                BiasWeights[i][j] = (float)(rand.NextDouble() - .5);
             }
         }
     }
@@ -66,8 +75,45 @@ public class NeuralNetwork : MonoBehaviour {
             layers[0][i] = inputs[i];
         }
 
+        for (int i = 0; i < NeuronWeights.Length; i++)
+        {
+            for (int j = 0; j < NeuronWeights[i].Length; j++)
+            {
+                float sum = 0;
+                for (int k = 0; k < NeuronWeights[i][j].Length; k++)
+                {
+                    sum += layers[i][k] * NeuronWeights[i][j][k];
+                }
+                sum += BiasWeights[i][j] * BiasNeuron;
+                //layers[i + 1][j] = 1 / (float)(1 + Math.Pow(Math.E, -sum));
+                layers[i + 1][j] = sum / (float) Math.Sqrt(1 + Math.Pow(sum, 2));
+            }
+        }
 
         return layers[layers.Length - 1][0];
     }
 
+    public float[] Normalize(float[] data)
+    {
+
+        float mean = 0;
+        float variance = 0;
+
+        for(int i = 0; i < data.Length; i++)
+        {
+            mean += data[i];
+            variance += (float) Math.Pow(data[i],2);
+        }
+        mean = mean / data.Length;
+        variance = (variance / data.Length) - (float) Math.Pow(mean, 2);
+
+        float[] ret = new float[data.Length];
+        for(int i = 0; i < data.Length; i++)
+        {
+            ret[i] = (data[i] - mean) / (float) Math.Sqrt(variance);
+        }
+
+        return ret;
+    }
 }
+
