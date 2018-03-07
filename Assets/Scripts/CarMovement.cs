@@ -13,23 +13,56 @@ public class CarMovement : MonoBehaviour {
     private Rigidbody2D rb;
     Vector2 start;
 
+    float maxDistance = 1000;
 
-    void Start()
+    void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        start = transform.position;
+        this.enabled = false;
         brain = GetComponent<NeuralNetwork>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
 
+    void Start()
+    {
+        start = transform.position;
+    }
+
+    public void InitBrain(System.Random random)
+    {
+        brain.Initialize(random);
+    }
 
     void FixedUpdate()
     {
         if (!Crash)
         {
-            float[] temp = { 1f, 2f, 20f, 10f, 8f };
-            float h = (brain.Compute(brain.Normalize(temp)) );
-            print(h);
+ 
+
+            RaycastHit2D LHit = Physics2D.Raycast(transform.position, -transform.right,LayerMask.GetMask("Obstacle"));
+            RaycastHit2D LFHit = Physics2D.Raycast(transform.position, transform.forward + transform.right, LayerMask.GetMask("Obstacle"));
+            RaycastHit2D FHit = Physics2D.Raycast(transform.position, transform.forward, LayerMask.GetMask("Obstacle"));
+            RaycastHit2D RFHit = Physics2D.Raycast(transform.position, transform.forward - transform.right, LayerMask.GetMask("Obstacle"));
+            RaycastHit2D RHit = Physics2D.Raycast(transform.position, transform.right, LayerMask.GetMask("Obstacle"));
+
+            print(LHit.collider.tag);
+
+            float L = (LHit.collider.tag == "Obstacle" ) ? LHit.distance : maxDistance;
+            float LF = (LFHit.collider.tag == "Obstacle") ? LFHit.distance : maxDistance;
+            float F = (FHit.collider.tag == "Obstacle") ? FHit.distance : maxDistance;
+            float RF = (RFHit.collider.tag == "Obstacle") ? RFHit.distance : maxDistance;
+            float R = (RHit.collider.tag == "Obstacle") ? RHit.distance : maxDistance;
+
+            print(L);
+            print(LF);
+            print(F);
+            print(RF);
+            print(R);
+
+            float[] Distances = { L,LF,F,RF,R };
+
+            float h = (brain.Compute(brain.Normalize(Distances)) );
+            
             float v = 1;
 
             Vector2 speed = transform.up * v * MaxSpeed;
@@ -63,7 +96,7 @@ public class CarMovement : MonoBehaviour {
         }
     }
 
-    private void ResetCar()
+    public void ResetCar()
     {
         this.enabled = false;
         fitness = 0;
@@ -71,7 +104,7 @@ public class CarMovement : MonoBehaviour {
         Crash = false;
     }
 
-    private void StartCar()
+    public void StartCar()
     {
         this.enabled = true;
     }

@@ -13,14 +13,13 @@ public class NeuralNetwork : MonoBehaviour
     int inputNum = 5;
     int hiddenLayerSize = 4;
     int outputNum = 1;
-    public RandomNumGene generator;
     System.Random rand;
 
     // Use this for initialization
-    void Awake()
+    public void Initialize(System.Random random)
     {
-        rand = generator.rand;
-        BiasNeuron = 1;
+        rand = random;
+        BiasNeuron = .5f;
         layers = new float[hiddenLayers + 2][];
         layers[0] = new float[inputNum];
 
@@ -42,7 +41,6 @@ public class NeuralNetwork : MonoBehaviour
         NeuronWeights = new float[hiddenLayers + 1][][];
         for (int i = 0; i <= hiddenLayers; i++)
         {
-            print(i);
             NeuronWeights[i] = new float[layers[i + 1].Length][];
             for (int j = 0; j < layers[i + 1].Length; j++)
             {
