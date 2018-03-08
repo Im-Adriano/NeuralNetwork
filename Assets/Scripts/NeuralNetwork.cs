@@ -104,11 +104,10 @@ public class NeuralNetwork : MonoBehaviour
         }
         mean = mean / data.Length;
         variance = (variance / data.Length) - (float) Math.Pow(mean, 2);
-
         float[] ret = new float[data.Length];
         for(int i = 0; i < data.Length; i++)
         {
-            ret[i] = (data[i] - mean) / (float) Math.Sqrt(variance);
+            ret[i] = (data[i] - mean) / (float)Math.Sqrt(variance);
         }
 
         return ret;

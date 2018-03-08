@@ -12,6 +12,7 @@ public class CarMovement : MonoBehaviour {
     
     private Rigidbody2D rb;
     Vector2 start;
+    Quaternion startRot;
 
     float maxDistance = 1000;
 
@@ -26,6 +27,7 @@ public class CarMovement : MonoBehaviour {
     void Start()
     {
         start = transform.position;
+        startRot = transform.rotation;
     }
 
     public void InitBrain(System.Random random)
@@ -35,34 +37,31 @@ public class CarMovement : MonoBehaviour {
 
     void FixedUpdate()
     {
+        Vector2 pos = new Vector2(transform.position.x,transform.position.y);
         if (!Crash)
         {
- 
 
-            RaycastHit2D LHit = Physics2D.Raycast(transform.position, -transform.right,LayerMask.GetMask("Obstacle"));
-            RaycastHit2D LFHit = Physics2D.Raycast(transform.position, transform.forward + transform.right, LayerMask.GetMask("Obstacle"));
-            RaycastHit2D FHit = Physics2D.Raycast(transform.position, transform.forward, LayerMask.GetMask("Obstacle"));
-            RaycastHit2D RFHit = Physics2D.Raycast(transform.position, transform.forward - transform.right, LayerMask.GetMask("Obstacle"));
-            RaycastHit2D RHit = Physics2D.Raycast(transform.position, transform.right, LayerMask.GetMask("Obstacle"));
+            RaycastHit2D LHit = Physics2D.Raycast(pos, -Vector2.right, 1 << LayerMask.GetMask("Obstacle"));
+            RaycastHit2D LFHit = Physics2D.Raycast(pos, Vector2.up + Vector2.right, 1 << LayerMask.GetMask("Obstacle"));
+            RaycastHit2D FHit = Physics2D.Raycast(pos, Vector2.up, 1 << LayerMask.GetMask("Obstacle"));
+            RaycastHit2D RFHit = Physics2D.Raycast(pos, Vector2.up - Vector2.right, 1 << LayerMask.GetMask("Obstacle"));
+            RaycastHit2D RHit = Physics2D.Raycast(pos, Vector2.right, 1 << LayerMask.GetMask("Obstacle"));
 
-            print(LHit.collider.tag);
 
-            float L = (LHit.collider.tag == "Obstacle" ) ? LHit.distance : maxDistance;
-            float LF = (LFHit.collider.tag == "Obstacle") ? LFHit.distance : maxDistance;
-            float F = (FHit.collider.tag == "Obstacle") ? FHit.distance : maxDistance;
-            float RF = (RFHit.collider.tag == "Obstacle") ? RFHit.distance : maxDistance;
-            float R = (RHit.collider.tag == "Obstacle") ? RHit.distance : maxDistance;
-
-            print(L);
-            print(LF);
-            print(F);
-            print(RF);
-            print(R);
+            float L = LHit.distance ;
+            float LF =  LFHit.distance ;
+            float F =  FHit.distance;
+            float RF =  RFHit.distance ;
+            float R =  RHit.distance ;
 
             float[] Distances = { L,LF,F,RF,R };
-
             float h = (brain.Compute(brain.Normalize(Distances)) );
-            
+
+            if (float.IsNaN(h))
+            {
+                h = 0;
+            }
+
             float v = 1;
 
             Vector2 speed = transform.up * v * MaxSpeed;
@@ -101,11 +100,13 @@ public class CarMovement : MonoBehaviour {
         this.enabled = false;
         fitness = 0;
         transform.position = start;
+        transform.rotation = startRot;
         Crash = false;
     }
 
     public void StartCar()
     {
+        ResetCar();
         this.enabled = true;
     }
 }

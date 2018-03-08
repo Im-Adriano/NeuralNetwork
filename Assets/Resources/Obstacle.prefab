@@ -20,9 +20,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4836307362767912}
   - component: {fileID: 212212938331010822}
+  - component: {fileID: 114328947475051388}
   - component: {fileID: 60361230183798706}
   - component: {fileID: 50307107265171584}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: Obstacle
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -36,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1853968348559122}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.07001286, y: 2.5904863, z: 0}
+  m_LocalPosition: {x: 1.96, y: 5.42, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -92,6 +93,17 @@ PolygonCollider2D:
       - {x: 0.00000004371139, y: -0.5}
       - {x: 0.43301272, y: -0.24999996}
       - {x: 0.43301272, y: 0.24999996}
+--- !u!114 &114328947475051388
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1853968348559122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af419b7380118e24e9cd25522daaf23b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &212212938331010822
 SpriteRenderer:
   m_ObjectHideFlags: 1

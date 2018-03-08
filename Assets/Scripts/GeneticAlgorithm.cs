@@ -18,9 +18,7 @@ public class GeneticAlgorithm : MonoBehaviour {
             Cars[i].GetComponent<CarMovement>().InitBrain(random);
         }
     }
-    void Start () {
-        
-        
+    public void Begin () {      
         for (int i = 0; i < GenSize; i++)
         {
             Cars[i].GetComponent<CarMovement>().StartCar();
