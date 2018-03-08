@@ -6,6 +6,9 @@ public class Delete : MonoBehaviour {
 
     private void OnMouseDown()
     {
+        print("Delete");
+        GameObject GhostHex = Instantiate(Resources.Load("GhostObstacle") as GameObject);
+        GhostHex.transform.position = transform.position;
         Destroy(gameObject);
     }
     

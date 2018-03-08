@@ -89,24 +89,33 @@ public class CarMovement : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Obstacle")
+        if (this.enabled == true)
         {
-            Crash = true;
+            if (collision.tag == "Obstacle")
+            {
+                Crash = true;
+            }
         }
     }
 
     public void ResetCar()
     {
+        
         this.enabled = false;
+        rb.velocity = Vector2.zero;
         fitness = 0;
         transform.position = start;
         transform.rotation = startRot;
         Crash = false;
     }
 
+    public bool isCrash()
+    {
+        return Crash;
+    }
+
     public void StartCar()
     {
-        ResetCar();
         this.enabled = true;
     }
 }

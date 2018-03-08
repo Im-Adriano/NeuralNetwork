@@ -481,7 +481,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c3229075c88ec54c936f0cdefbda9f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GenSize: 20
+  GenerationSize: 50
+  MaxNumGenerations: 10
+  PercentElite: 0
+  PercentMutate: 0
+  GenerationTimeDelay: 0
 --- !u!4 &1496420422
 Transform:
   m_ObjectHideFlags: 0

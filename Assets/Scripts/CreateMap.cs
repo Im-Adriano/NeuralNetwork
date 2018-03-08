@@ -60,9 +60,12 @@ public class CreateMap : MonoBehaviour {
             for (int x = 0; x < gridWidth; x++)
             {
                 GameObject hex = Instantiate(Resources.Load("Obstacle") as GameObject);
+              
                 Vector2 gridPos = new Vector2(x, y);
                 hex.transform.position = CalcWorldPos(gridPos);
+               
                 hex.name = "Obstacle " + x + " , " + y;
+              
 
             }
         }
