@@ -4,10 +4,10 @@ using System;
 public class NeuralNetwork : MonoBehaviour
 {
 
-    private float[][] layers;
-    private float[][][] NeuronWeights;
-    private float[][] BiasWeights;
-    float BiasNeuron;
+    public float[][] layers;
+    public float[][][] NeuronWeights;
+    public float[][] BiasWeights;
+    float BiasNeuron = 1f;
 
     int hiddenLayers = 1;
     int inputNum = 5;
@@ -19,7 +19,7 @@ public class NeuralNetwork : MonoBehaviour
     public void Initialize(System.Random random)
     {
         rand = random;
-        BiasNeuron = .5f;
+
         layers = new float[hiddenLayers + 2][];
         layers[0] = new float[inputNum];
 
@@ -61,7 +61,7 @@ public class NeuralNetwork : MonoBehaviour
             BiasWeights[i] = new float[layers[i + 1].Length];
             for (int j = 0; j < layers[i + 1].Length; j++)
             {
-                BiasWeights[i][j] = (float)(rand.NextDouble() - .5);
+                BiasWeights[i][j] = (float)(rand.NextDouble() - .5f);
             }
         }
     }
@@ -83,8 +83,8 @@ public class NeuralNetwork : MonoBehaviour
                     sum += layers[i][k] * NeuronWeights[i][j][k];
                 }
                 sum += BiasWeights[i][j] * BiasNeuron;
-                //layers[i + 1][j] = 1 / (float)(1 + Math.Pow(Math.E, -sum));
-                layers[i + 1][j] = sum / (float) Math.Sqrt(1 + Math.Pow(sum, 2));
+                //layers[i + 1][j] = 1 / (float)(1 + Math.Pow(Math.E, -sum));  0 to 1
+                layers[i + 1][j] = sum / (float) Math.Sqrt(1 + Math.Pow(sum, 2)); // -1 to 1
             }
         }
 
@@ -111,6 +111,80 @@ public class NeuralNetwork : MonoBehaviour
         }
 
         return ret;
+    }
+
+
+
+    public void Combine(NeuralNetwork other, NeuralNetwork other2, float mutate)
+    {
+        
+        for (int i = 0; i <= hiddenLayers; i++)
+        {
+            for (int j = 0; j < layers[i + 1].Length; j++)
+            {
+                for (int k = 0; k < layers[i].Length; k++)
+                {
+                    if (rand.NextDouble() < mutate)
+                    {
+                        NeuronWeights[i][j][k] = (float)(rand.NextDouble() * 2) - 1;
+                    }
+                    else {
+                        if (rand.NextDouble() > .5)
+                        {
+                            NeuronWeights[i][j][k] = NeuronWeights[i][j][k];
+                        }
+                        else
+                        {
+                            NeuronWeights[i][j][k] = other2.NeuronWeights[i][j][k];
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i <= hiddenLayers; i++)
+        {
+            for (int j = 0; j < layers[i + 1].Length; j++)
+            {
+                if (rand.NextDouble() < mutate)
+                {
+                    BiasWeights[i][j] = (float)(rand.NextDouble() - .5f);
+                }
+                else
+                {
+                    if (rand.NextDouble() > .5)
+                    {
+                        BiasWeights[i][j] = BiasWeights[i][j];
+                    }
+                    else
+                    {
+                        BiasWeights[i][j] = other2.BiasWeights[i][j];
+                    }
+                }
+
+            }
+        }
+    }
+
+    public void Set(NeuralNetwork other)
+    {
+        for (int i = 0; i <= hiddenLayers; i++)
+        {
+            for (int j = 0; j < layers[i + 1].Length; j++)
+            {
+                for (int k = 0; k < layers[i].Length; k++)
+                {
+                    NeuronWeights[i][j][k] = other.NeuronWeights[i][j][k];
+                }
+            }
+        }
+        for (int i = 0; i <= hiddenLayers; i++)
+        {
+            for (int j = 0; j < layers[i + 1].Length; j++)
+            {
+                BiasWeights[i][j] = other.BiasWeights[i][j];        
+
+            }
+        }
     }
 }
 

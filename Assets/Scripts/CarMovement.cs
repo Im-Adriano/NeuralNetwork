@@ -5,11 +5,13 @@ using UnityEngine;
 public class CarMovement : MonoBehaviour {
 
     bool Crash = false;
-    [SerializeField] int fitness = 0;
+    public float fitness = 0;
     public float MaxSpeed;
     public float steering;
     NeuralNetwork brain;
     
+
+
     private Rigidbody2D rb;
     Vector2 start;
     Quaternion startRot;
@@ -41,27 +43,29 @@ public class CarMovement : MonoBehaviour {
         if (!Crash)
         {
 
-            RaycastHit2D LHit = Physics2D.Raycast(pos, -Vector2.right, 1 << LayerMask.GetMask("Obstacle"));
-            RaycastHit2D LFHit = Physics2D.Raycast(pos, Vector2.up + Vector2.right, 1 << LayerMask.GetMask("Obstacle"));
-            RaycastHit2D FHit = Physics2D.Raycast(pos, Vector2.up, 1 << LayerMask.GetMask("Obstacle"));
-            RaycastHit2D RFHit = Physics2D.Raycast(pos, Vector2.up - Vector2.right, 1 << LayerMask.GetMask("Obstacle"));
-            RaycastHit2D RHit = Physics2D.Raycast(pos, Vector2.right, 1 << LayerMask.GetMask("Obstacle"));
+            RaycastHit2D LHit = Physics2D.Raycast(pos, -Vector2.right, Mathf.Infinity,  LayerMask.GetMask("Obstacle"));
+            RaycastHit2D LFHit = Physics2D.Raycast(pos, Vector2.up + Vector2.right, Mathf.Infinity,  LayerMask.GetMask("Obstacle"));
+            RaycastHit2D FHit = Physics2D.Raycast(pos, Vector2.up, Mathf.Infinity,  LayerMask.GetMask("Obstacle"));
+            RaycastHit2D RFHit = Physics2D.Raycast(pos, Vector2.up - Vector2.right, Mathf.Infinity,  LayerMask.GetMask("Obstacle"));
+            RaycastHit2D RHit = Physics2D.Raycast(pos, Vector2.right, Mathf.Infinity,  LayerMask.GetMask("Obstacle"));
 
-
+            
             float L = LHit.distance ;
             float LF =  LFHit.distance ;
             float F =  FHit.distance;
             float RF =  RFHit.distance ;
             float R =  RHit.distance ;
 
+            fitness += (L + LF + F + RF + R) / 50;
+
             float[] Distances = { L,LF,F,RF,R };
             float h = (brain.Compute(brain.Normalize(Distances)) );
-
+            
             if (float.IsNaN(h))
             {
                 h = 0;
             }
-
+         
             float v = 1;
 
             Vector2 speed = transform.up * v * MaxSpeed;
@@ -76,9 +80,9 @@ public class CarMovement : MonoBehaviour {
             else
             {
                 rb.rotation -= h * steering * (rb.velocity.magnitude / 5.0f);
-
+                fitness += .1f;
             }
-            fitness++;
+            
         }
         else
         {
