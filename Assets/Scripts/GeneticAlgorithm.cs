@@ -6,11 +6,11 @@ public class GeneticAlgorithm : MonoBehaviour {
 
     GameObject[] Cars;
     System.Random random = new System.Random();
-    public int GenerationSize = 50;
-    public int MaxNumGenerations = 10;
+    [Range(2, 100)] public int GenerationSize = 50;
+    [Range(0, 1000)] public int MaxNumGenerations = 10;
     [Range(2, 10)] public int NumElite;
     [Range(0, 1)] public float PercentMutate;
-    [Range(0,100)]public int GenerationTimeDelay;
+    [Range(0, 100)] public int GenerationTimeDelay;
 
     int GenCounter = 0;
     int DelayCounter = 0;
@@ -82,12 +82,12 @@ public class GeneticAlgorithm : MonoBehaviour {
 */
         for (int i = Count; i < GenerationSize; i++)
         {
-            NeuralNetwork Elite1 = Elite[0].GetComponent<NeuralNetwork>();
-            NeuralNetwork Elite2 = Elite[1].GetComponent<NeuralNetwork>();
+            NeuralNetwork Elite1 = Elite[random.Next(0, NumElite - 1)].GetComponent<NeuralNetwork>();
+            NeuralNetwork Elite2 = Elite[random.Next(0, NumElite - 1)].GetComponent<NeuralNetwork>();
 
             NewGeneration[i] = Instantiate(Resources.Load("Car") as GameObject);
             NewGeneration[i].GetComponent<NeuralNetwork>().Initialize(random);
-            NewGeneration[i].GetComponent<NeuralNetwork>().Combine(Elite1, Elite2,PercentMutate);
+            NewGeneration[i].GetComponent<NeuralNetwork>().Combine(Elite1, Elite2, PercentMutate);
         }
         
         for(int i = 0; i < GenerationSize; i++)
@@ -145,7 +145,9 @@ public class GeneticAlgorithm : MonoBehaviour {
             DelayCounter++;
         }
 
+     
         
         
     }
+  
 }

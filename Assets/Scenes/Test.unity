@@ -201,7 +201,7 @@ GameObject:
   - component: {fileID: 135809620}
   - component: {fileID: 135809619}
   m_Layer: 5
-  m_Name: Button
+  m_Name: StartButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -436,7 +436,6 @@ Camera:
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -482,9 +481,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c3229075c88ec54c936f0cdefbda9f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GenerationSize: 50
-  MaxNumGenerations: 100
-  NumElite: 5
+  GenerationSize: 75
+  MaxNumGenerations: 1000
+  NumElite: 10
   PercentMutate: 0.05
   GenerationTimeDelay: 20
 --- !u!4 &1496420422
@@ -526,7 +525,7 @@ GameObject:
   - component: {fileID: 1609922816}
   - component: {fileID: 1609922815}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Main
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
