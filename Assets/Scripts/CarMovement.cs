@@ -71,17 +71,7 @@ public class CarMovement : MonoBehaviour {
             Vector2 speed = transform.up * v * MaxSpeed;
             rb.velocity = speed;
 
-            float direction = Vector2.Dot(rb.velocity, rb.GetRelativeVector(Vector2.up));
-            if (direction >= 0.0f)
-            {
-                rb.rotation += h * steering;
-
-            }
-            else
-            {
-                rb.rotation -= h * steering;
-                
-            }
+            rb.rotation += h * steering;
             fitness += (L + LF + F + RF + R) / 50;
         }
         else

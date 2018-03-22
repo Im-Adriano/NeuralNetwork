@@ -425,7 +425,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 10
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -436,6 +436,7 @@ Camera:
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -481,7 +482,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c3229075c88ec54c936f0cdefbda9f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GenerationSize: 75
+  GenerationSize: 100
   MaxNumGenerations: 1000
   NumElite: 10
   PercentMutate: 0.05
@@ -510,9 +511,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c25ba1f4289ee6a459406e764ce67078, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridWidth: 31
-  gridHeight: 31
-  gap: 0.1
+  gridWidth: 20
+  gridHeight: 20
+  gap: 0.05
 --- !u!1 &1609922814
 GameObject:
   m_ObjectHideFlags: 0

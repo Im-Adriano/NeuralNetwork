@@ -36,7 +36,7 @@ public class GeneticAlgorithm : MonoBehaviour {
     {
         
         int NumMutate = (int)(PercentMutate * GenerationSize);
-        print(NumElite);
+        
         GameObject[] Elite = new GameObject[NumElite];
         float AvgFit = 0;
         for (int i = 0; i < GenerationSize; i++)
@@ -87,9 +87,8 @@ public class GeneticAlgorithm : MonoBehaviour {
 
             NewGeneration[i] = Instantiate(Resources.Load("Car") as GameObject);
             NewGeneration[i].GetComponent<NeuralNetwork>().Initialize(random);
-            NewGeneration[i].GetComponent<NeuralNetwork>().Combine(Elite1, Elite2, PercentMutate);
+            NewGeneration[i].GetComponent<NeuralNetwork>().Combine(Elite1, Elite2,PercentMutate);
         }
-        
         for(int i = 0; i < GenerationSize; i++)
         {
             Destroy(Cars[i]);

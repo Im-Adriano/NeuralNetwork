@@ -47,7 +47,7 @@ public class NeuralNetwork : MonoBehaviour
                 NeuronWeights[i][j] = new float[layers[i].Length];
                 for (int k = 0; k < layers[i].Length; k++)
                 {
-                    NeuronWeights[i][j][k] = (float)(rand.NextDouble() * 2) - 1;
+                    NeuronWeights[i][j][k] = (float)(rand.NextDouble() -.5f);
                 }
             }
         }
@@ -126,12 +126,12 @@ public class NeuralNetwork : MonoBehaviour
                 {
                     if (rand.NextDouble() < mutate)
                     {
-                        NeuronWeights[i][j][k] = (float)(rand.NextDouble() * 2) - 1;
+                        NeuronWeights[i][j][k] = (float)(rand.NextDouble() - .5f);
                     }
                     else {
                         if (rand.NextDouble() > .5)
                         {
-                            NeuronWeights[i][j][k] = NeuronWeights[i][j][k];
+                            NeuronWeights[i][j][k] = other.NeuronWeights[i][j][k];
                         }
                         else
                         {
@@ -153,7 +153,7 @@ public class NeuralNetwork : MonoBehaviour
                 {
                     if (rand.NextDouble() > .5)
                     {
-                        BiasWeights[i][j] = BiasWeights[i][j];
+                        BiasWeights[i][j] = other.BiasWeights[i][j];
                     }
                     else
                     {
