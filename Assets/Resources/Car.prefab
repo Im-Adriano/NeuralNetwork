@@ -103,7 +103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fitness: 0
-  MaxSpeed: 5
+  MaxSpeed: 3
   steering: 10
 --- !u!114 &114450480210096976
 MonoBehaviour:

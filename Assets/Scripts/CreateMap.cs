@@ -12,9 +12,12 @@ public class CreateMap : MonoBehaviour {
     public float gap = 0.0f;
 
     Vector2 startPos;
+    GameObject[] hexes;
 
     void Start()
     {
+        hexes = new GameObject[gridHeight * gridWidth];
+
         AddGap();
         CalcStartPos();
         CreateGrid();
@@ -55,19 +58,28 @@ public class CreateMap : MonoBehaviour {
 
     void CreateGrid()
     {
+        
+        int counter = 0;
         for(int y = 0; y < gridHeight; y++)
         {
             for (int x = 0; x < gridWidth; x++)
             {
                 GameObject hex = Instantiate(Resources.Load("Obstacle") as GameObject);
-              
+                hexes[counter] = hex;
+                counter++;
+
                 Vector2 gridPos = new Vector2(x, y);
                 hex.transform.position = CalcWorldPos(gridPos);
-               
                 hex.name = "Obstacle " + x + " , " + y;
-              
-
             }
         }
+    }
+
+    public void DisableHexes()
+    {
+        for (int i = 0; i < hexes.Length; i++)
+        {
+            hexes[i].GetComponent<CreateDeleteHex>().active = false;
+        }   
     }
 }

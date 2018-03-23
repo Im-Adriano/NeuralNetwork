@@ -18,9 +18,17 @@ public class GeneticAlgorithm : MonoBehaviour {
     bool AllCrashed = false;
     bool GenRunning = false;
 
+    public float TopFit = 0;
+    public float TopGenFit = 0;
+    public List<float> GenFit = new List<float>();
+
+    public string TopCarBrain;
+    
+
     // Use this for initialization
     private void Awake()
     {
+
         Cars = new GameObject[GenerationSize];
         for (int i = 0; i < GenerationSize; i++)
         {
@@ -28,15 +36,13 @@ public class GeneticAlgorithm : MonoBehaviour {
             Cars[i].GetComponent<CarMovement>().InitBrain(random);
         }
     }
+
     public void Begin () {
         BeginGen = true;
     }
 	
     void Evolve()
     {
-        
-        int NumMutate = (int)(PercentMutate * GenerationSize);
-        
         GameObject[] Elite = new GameObject[NumElite];
         float AvgFit = 0;
         for (int i = 0; i < GenerationSize; i++)
@@ -57,10 +63,24 @@ public class GeneticAlgorithm : MonoBehaviour {
                     break;
                 }
             }
-            AvgFit += Cars[i].GetComponent<CarMovement>().fitness;
+
+            float fit = Cars[i].GetComponent<CarMovement>().fitness;
+            AvgFit += fit;
+
+            if (Cars[i].GetComponent<CarMovement>().fitness > TopFit)
+            {
+                TopFit = fit;
+            }
         }
 
-        print(AvgFit/GenerationSize);
+
+        float currentGenFit = AvgFit / GenerationSize;
+        if(currentGenFit > TopGenFit)
+        {
+            TopGenFit = currentGenFit;
+        }
+        GenFit.Add(currentGenFit);
+
 
         int Count = 0;
         GameObject[] NewGeneration = new GameObject[GenerationSize];
@@ -72,14 +92,7 @@ public class GeneticAlgorithm : MonoBehaviour {
             NewGeneration[Count].GetComponent<NeuralNetwork>().Set(Elite[i].GetComponent<NeuralNetwork>());
             Count++;
         }
-/*
-        for (int i = 0; i < NumMutate; i++)
-        {
-            NewGeneration[Count] = Instantiate(Resources.Load("Car") as GameObject);
-            NewGeneration[Count].GetComponent<CarMovement>().InitBrain(random);
-            Count++;
-        }
-*/
+
         for (int i = Count; i < GenerationSize; i++)
         {
             NeuralNetwork Elite1 = Elite[random.Next(0, NumElite - 1)].GetComponent<NeuralNetwork>();
@@ -143,9 +156,6 @@ public class GeneticAlgorithm : MonoBehaviour {
             }
             DelayCounter++;
         }
-
-     
-        
         
     }
   

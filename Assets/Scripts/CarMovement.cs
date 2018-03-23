@@ -16,8 +16,6 @@ public class CarMovement : MonoBehaviour {
     Vector2 start;
     Quaternion startRot;
 
-    float maxDistance = 1000;
-
     void Awake()
     {
         this.enabled = false;
