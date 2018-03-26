@@ -32,13 +32,23 @@ public class UI : MonoBehaviour {
                 neurons[i][j].transform.SetParent(dataPanel.transform);
                 dataChildren.Add(neurons[i][j]);
                 neurons[i][j].transform.localScale = Vector3.one;
-                if (neurons[i].Length % 2 == 1)
+                Vector3 leftAndRight = Vector3.zero;
+                if(neurons.Length % 2 == 1)
                 {
-                    neurons[i][j].transform.localPosition = (-Vector3.right * layerWidth + (Vector3.right * (i * layerWidth))) + (Vector3.zero + (Vector3.up * ((j - (neurons[i].Length / 2)) * layerHeight)));
+                    leftAndRight = Vector3.zero + (Vector3.right * ((i - (neurons.Length / 2)) * layerWidth));
                 }
                 else
                 {
-                    neurons[i][j].transform.localPosition = (-Vector3.right * layerWidth + (Vector3.right * (i * layerWidth))) + (Vector3.zero + (Vector3.up * ((j + .5f - (neurons[i].Length / 2)) * layerHeight)));
+                    leftAndRight = Vector3.zero + (Vector3.right * ((i + .5f - (neurons.Length / 2)) * layerWidth));
+                }
+                
+                if (neurons[i].Length % 2 == 1)
+                {
+                    neurons[i][j].transform.localPosition = leftAndRight + (Vector3.zero + (Vector3.up * ((j - (neurons[i].Length / 2)) * layerHeight)));
+                }
+                else
+                {
+                    neurons[i][j].transform.localPosition = leftAndRight + (Vector3.zero + (Vector3.up * ((j + .5f - (neurons[i].Length / 2)) * layerHeight)));
                 }
 
 
@@ -58,7 +68,7 @@ public class UI : MonoBehaviour {
                     dataChildren.Add(t);
                     t.AddComponent<Image>();
                     RectTransform rt = t.GetComponent<RectTransform>();
-                    rt.sizeDelta = new Vector2(differenceVector.magnitude, 4f);
+                    rt.sizeDelta = new Vector2(differenceVector.magnitude, 2f);
                     rt.pivot = new Vector2(0, 0.5f);
                     rt.position = neurons[i + 1][j].transform.position;
                    
@@ -68,14 +78,14 @@ public class UI : MonoBehaviour {
                     Image im = rt.GetComponent<Image>();
                     if (NN.NeuronWeights[i][j][k] > 0)
                     {
-                        Color32 green = new Color32(161, 255, 171, (byte)(NN.NeuronWeights[i][j][k] * 255));
+                        Color32 green = new Color32(161, 255, 171, (byte)(NN.NeuronWeights[i][j][k] * 2 * 255));
                         im.color = green;
 
                     }
                     else
                     {
 
-                        Color32 red = new Color32(255, 161, 161, (byte)(NN.NeuronWeights[i][j][k] * -255));
+                        Color32 red = new Color32(255, 161, 161, (byte)(NN.NeuronWeights[i][j][k] * 2 * -255));
                         im.color = red;
                     }
                 }
