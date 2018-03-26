@@ -21,13 +21,18 @@ public class GeneticAlgorithm : MonoBehaviour {
     public float TopFit = 0;
     public float TopGenFit = 0;
     public List<float> GenFit = new List<float>();
+    UI ui;
 
-    public string TopCarBrain;
+    public GameObject TopCarBrain;
     
 
     // Use this for initialization
     private void Awake()
     {
+        TopCarBrain = new GameObject();
+        TopCarBrain.AddComponent<NeuralNetwork>();
+        TopCarBrain.GetComponent<NeuralNetwork>().Initialize(random);
+
 
         Cars = new GameObject[GenerationSize];
         for (int i = 0; i < GenerationSize; i++)
@@ -35,6 +40,8 @@ public class GeneticAlgorithm : MonoBehaviour {
             Cars[i] = GameObject.Instantiate(Resources.Load("Car") as GameObject);
             Cars[i].GetComponent<CarMovement>().InitBrain(random);
         }
+
+        ui = GetComponent<UI>();
     }
 
     public void Begin () {
@@ -70,6 +77,8 @@ public class GeneticAlgorithm : MonoBehaviour {
             if (Cars[i].GetComponent<CarMovement>().fitness > TopFit)
             {
                 TopFit = fit;
+                TopCarBrain.GetComponent<NeuralNetwork>().Set(Cars[i].GetComponent<NeuralNetwork>());
+                ui.printNeuralNetwork(TopCarBrain.GetComponent<NeuralNetwork>());
             }
         }
 
@@ -145,9 +154,11 @@ public class GeneticAlgorithm : MonoBehaviour {
             GenRunning = false;
             if (DelayCounter > GenerationTimeDelay)
             {
+                
                 print("Evolving");
                 //Evolve generation
                 Evolve();
+                ui.GenGraph(GenFit, TopGenFit);
                 for (int i = 0; i < GenerationSize; i++)
                 {
                     Cars[i].GetComponent<CarMovement>().ResetCar();
