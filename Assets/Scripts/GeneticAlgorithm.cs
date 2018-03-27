@@ -21,6 +21,7 @@ public class GeneticAlgorithm : MonoBehaviour {
     public float TopFit = 0;
     public float TopGenFit = 0;
     public List<float> GenFit = new List<float>();
+    public List<float> Fit = new List<float>();
     UI ui;
 
     public GameObject TopCarBrain;
@@ -82,6 +83,7 @@ public class GeneticAlgorithm : MonoBehaviour {
             }
         }
 
+        Fit.Add(Elite[0].GetComponent<CarMovement>().fitness);
 
         float currentGenFit = AvgFit / GenerationSize;
         if(currentGenFit > TopGenFit)
@@ -158,7 +160,8 @@ public class GeneticAlgorithm : MonoBehaviour {
                 print("Evolving");
                 //Evolve generation
                 Evolve();
-                ui.GenGraph(GenFit, TopGenFit);
+                ui.GenGraph(GenFit, TopGenFit,ui.graphGenPanel,ui.graphGenChildren);
+                ui.GenGraph(Fit, TopFit, ui.graphBestPanel, ui.graphBestChildren);
                 for (int i = 0; i < GenerationSize; i++)
                 {
                     Cars[i].GetComponent<CarMovement>().ResetCar();

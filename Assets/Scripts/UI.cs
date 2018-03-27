@@ -5,8 +5,12 @@ using UnityEngine.UI;
 
 public class UI : MonoBehaviour {
 
-    public GameObject graphPanel;
-    List<GameObject> graphChildren = new List<GameObject>();
+    public GameObject graphGenPanel;
+    public List<GameObject> graphGenChildren = new List<GameObject>();
+
+    public GameObject graphBestPanel;
+    public List<GameObject> graphBestChildren = new List<GameObject>();
+
     public GameObject dataPanel;
     List<GameObject> dataChildren = new List<GameObject>();
 
@@ -61,7 +65,6 @@ public class UI : MonoBehaviour {
             {
                 for (int k = 0; k < NN.NeuronWeights[i][j].Length; k++)
                 {
-                    
                     Vector3 differenceVector = neurons[i][k].transform.position - neurons[i + 1][j].transform.position;
                     GameObject t = new GameObject();
                     t.transform.SetParent(dataPanel.transform);
@@ -80,11 +83,9 @@ public class UI : MonoBehaviour {
                     {
                         Color32 green = new Color32(161, 255, 171, (byte)(NN.NeuronWeights[i][j][k] * 2 * 255));
                         im.color = green;
-
                     }
                     else
                     {
-
                         Color32 red = new Color32(255, 161, 161, (byte)(NN.NeuronWeights[i][j][k] * 2 * -255));
                         im.color = red;
                     }
@@ -93,11 +94,11 @@ public class UI : MonoBehaviour {
         }
     }
 
-    public void GenGraph(List<float> eval,float max)
+    public void GenGraph(List<float> eval,float max, GameObject panel, List<GameObject> children)
     {
-        for(int i = 0; i < graphChildren.Count; i++)
+        for(int i = 0; i < children.Count; i++)
         {
-            Destroy(graphChildren[i]);
+            Destroy(children[i]);
         }
 
         Color32[] gCol = new Color32[]
@@ -108,15 +109,15 @@ public class UI : MonoBehaviour {
         };
 
         
-        float graphBarWidth = graphPanel.GetComponent<RectTransform>().rect.width / eval.Count;
-        float topOfGraph = graphPanel.GetComponent<RectTransform>().rect.height;
+        float graphBarWidth = panel.GetComponent<RectTransform>().rect.width / eval.Count;
+        float topOfGraph = panel.GetComponent<RectTransform>().rect.height;
      
 
         for (int i = 0; i < eval.Count; i++)
         {
             GameObject t = new GameObject();
-            t.transform.SetParent(graphPanel.transform);
-            graphChildren.Add(t);
+            t.transform.SetParent(panel.transform);
+            children.Add(t);
             t.AddComponent<Image>();
             RectTransform rt = t.GetComponent<RectTransform>();
             rt.transform.localPosition = Vector3.zero + (Vector3.right * (i * graphBarWidth));
