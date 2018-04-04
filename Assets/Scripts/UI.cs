@@ -8,9 +8,6 @@ public class UI : MonoBehaviour {
     public GameObject graphGenPanel;
     public List<GameObject> graphGenChildren = new List<GameObject>();
 
-    public GameObject graphBestPanel;
-    public List<GameObject> graphBestChildren = new List<GameObject>();
-
     public GameObject dataPanel;
     List<GameObject> dataChildren = new List<GameObject>();
 
@@ -127,7 +124,7 @@ public class UI : MonoBehaviour {
             rt.anchorMax = Vector2.zero;
             rt.localEulerAngles = Vector3.zero;
             rt.sizeDelta = new Vector2(graphBarWidth, (eval[i] / max) * topOfGraph);
-
+            
             Image im = rt.GetComponent<Image>();
 
             if (eval[i] == max)

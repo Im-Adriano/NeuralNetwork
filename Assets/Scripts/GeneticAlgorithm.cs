@@ -161,7 +161,6 @@ public class GeneticAlgorithm : MonoBehaviour {
                 //Evolve generation
                 Evolve();
                 ui.GenGraph(GenFit, TopGenFit,ui.graphGenPanel,ui.graphGenChildren);
-                ui.GenGraph(Fit, TopFit, ui.graphBestPanel, ui.graphBestChildren);
                 for (int i = 0; i < GenerationSize; i++)
                 {
                     Cars[i].GetComponent<CarMovement>().ResetCar();
