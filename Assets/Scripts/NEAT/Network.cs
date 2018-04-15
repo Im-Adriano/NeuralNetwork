@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class Network : MonoBehaviour {
     int ID;
-    List<Neuron> Neurons;
+    Dictionary<int,Neuron> Neurons;
     List<Synapse> Synapses;
     float Fitness;
     float AdjustedFitness;
     float NumOffsring;
     int NumInputs, NumOutputs;
     int Speices;
-    System.Random random = new System.Random();
+    static System.Random random = new System.Random();
 
-    public Network(int id, List<Neuron> n, List<Synapse> s, int i, int o)
+    public Network(int id, Dictionary<int,Neuron> n, List<Synapse> s, int i, int o)
     {
         ID = id;
         Neurons = n;
@@ -81,6 +81,7 @@ public class Network : MonoBehaviour {
                 done = true;
                 IN = S1.IN;
                 OUT = S1.OUT;
+                S1.Enabled = false;
                 oldWeight = S1.Weight;
             }
            
@@ -110,7 +111,7 @@ public class Network : MonoBehaviour {
         if(InnovationNum < 0)
         {
             int newNID = table.CreateNewInnovation(IN, OUT, InnovationTable.InnovationType.NewNeuron);
-            Neurons.Add(new Neuron(InnovationTable.NeuronType.hidden, newWidth, newDepth, newNID));
+            Neurons.Add(newNID, new Neuron(InnovationTable.NeuronType.hidden, newWidth, newDepth, newNID));
 
             int Link1InnovationNum = table.CreateNewInnovation(IN, newNID, InnovationTable.InnovationType.NewLink);
             Synapses.Add(new Synapse(IN, newNID, 1, Link1InnovationNum));
@@ -121,7 +122,7 @@ public class Network : MonoBehaviour {
         else
         {
             int newNID = table.GetNeuronID(InnovationNum);
-            Neurons.Add(new Neuron(InnovationTable.NeuronType.hidden, newWidth, newDepth, newNID));
+            Neurons.Add(newNID, new Neuron(InnovationTable.NeuronType.hidden, newWidth, newDepth, newNID));
 
             int link1 = table.GetInnovationNumber(IN, newNID, InnovationTable.InnovationType.NewLink);
             Synapses.Add(new Synapse(IN, newNID, 1, link1));
@@ -155,6 +156,35 @@ public class Network : MonoBehaviour {
 
     public float Compute()
     {
+        Queue<Neuron> EvalOrder = new Queue<Neuron>();
+
+        for(int i = 0; i < NumInputs; i++)
+        {
+            EvalOrder.Enqueue(Neurons[i]);
+        }
+        
+        for(int i = 0; i < EvalOrder.Count; i++)
+        {
+            Neuron current = EvalOrder.Dequeue();
+            if (current.Type == InnovationTable.NeuronType.hidden)
+            {
+                //sigmoid here
+            }
+           
+            for (int k = 0; k < Synapses.Count; k++)
+            {
+                if (Synapses[i].IN == current.ID)
+                {
+                    Neurons[Synapses[i].OUT].value = current.value * Synapses[i].Weight;
+                    if (Neurons[Synapses[i].OUT].Type != InnovationTable.NeuronType.output)
+                    {
+                        EvalOrder.Enqueue(Neurons[Synapses[i].OUT]);
+                    }
+                }
+            }
+            
+        }
+        //eval output here
         return 0f;
     }
 
@@ -205,5 +235,146 @@ public class Network : MonoBehaviour {
         }
         return -1;
     }
+    
+    int NumGenes()
+    {
+        return Synapses.Count + Neurons.Count - 2;
+    }
 
+    public static Network Crossover(Network A, Network B)
+    {
+        InnovationTable.ParentType best;
+        if (A.Fitness == B.Fitness)
+        {
+            if(A.NumGenes() == B.NumGenes())
+            {
+                best = (InnovationTable.ParentType) random.Next(0 , 1);
+            }
+            else if(A.NumGenes() < B.NumGenes())
+            {
+                best = InnovationTable.ParentType.A;
+            }
+            else
+            {
+                best = InnovationTable.ParentType.B;
+            }
+        }
+        else if(A.Fitness > B.Fitness)
+        {
+            best = InnovationTable.ParentType.A;
+        }
+        else
+        {
+            best = InnovationTable.ParentType.B;
+        }
+
+        Dictionary<int,Neuron> babyNeurons = new Dictionary<int, Neuron>();
+        List<Synapse> babySynapses = new List<Synapse>();
+
+        Synapse SelectedGene = null;
+        List<int> NeuronsToAdd = new List<int>();
+
+        int curA = 0;
+        int curB = 0;
+
+        while (!((curA == A.Synapses.Count) && (curB == B.Synapses.Count)))
+        {
+            if(curA == A.Synapses.Count && curB < B.Synapses.Count)
+            {
+                if(best == InnovationTable.ParentType.B)
+                {
+                    SelectedGene = B.Synapses[curB];
+                }
+                curB++;
+            }
+            else if (curB == B.Synapses.Count && curA < A.Synapses.Count)
+            {
+                if(best == InnovationTable.ParentType.A)
+                {
+                    SelectedGene = A.Synapses[curA];
+                }
+                curA++;
+            }
+            else if (A.Synapses[curA].Innovation < B.Synapses[curB].Innovation)
+            {
+                if (best == InnovationTable.ParentType.A)
+                {
+                    SelectedGene = A.Synapses[curA];
+                }
+                curA++;
+            }
+            else if(B.Synapses[curB].Innovation < A.Synapses[curA].Innovation)
+            {
+                if(best == InnovationTable.ParentType.B)
+                {
+                    SelectedGene = B.Synapses[curB];
+                }
+                curB++;
+            }
+            else if (B.Synapses[curB].Innovation == A.Synapses[curA].Innovation)
+            {
+                if(random.NextDouble() < .5f)
+                {
+                    SelectedGene = A.Synapses[curA];
+                }
+                else
+                {
+                    SelectedGene = B.Synapses[curB];
+                }
+                curA++;
+                curB++;
+            }
+
+
+            if(babySynapses.Count == 0)
+            {
+                babySynapses.Add(SelectedGene);
+            }
+            else if (babySynapses[babySynapses.Count-1].Innovation != SelectedGene.Innovation)
+            {
+                babySynapses.Add(SelectedGene);
+            }
+
+            if (!NeuronsToAdd.Contains(SelectedGene.IN))
+            {
+                NeuronsToAdd.Add(SelectedGene.IN);
+            }
+
+            if (!NeuronsToAdd.Contains(SelectedGene.OUT))
+            {
+                NeuronsToAdd.Add(SelectedGene.OUT);
+            }
+        }
+
+        NeuronsToAdd.Sort();
+
+        for(int i = 0; i < NeuronsToAdd.Count; i++)
+        {
+            if (best == InnovationTable.ParentType.A)
+            {
+                for (int k = 0; k < A.Neurons.Count; k++)
+                {
+                    if (A.Neurons[k].ID == NeuronsToAdd[i])
+                    {
+                        babyNeurons.Add(NeuronsToAdd[i], new Neuron(A.Neurons[k].Type, A.Neurons[k].SplitX, A.Neurons[k].SplitY, NeuronsToAdd[i]));
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (int k = 0; k < B.Neurons.Count; k++)
+                {
+                    if (B.Neurons[k].ID == NeuronsToAdd[i])
+                    {
+                        babyNeurons.Add(NeuronsToAdd[i], new Neuron(B.Neurons[k].Type, B.Neurons[k].SplitX, B.Neurons[k].SplitY, NeuronsToAdd[i]));
+                        break;
+                    }
+                }
+            }
+            
+        }
+
+        return new Network(0,babyNeurons,babySynapses,A.NumInputs,A.NumOutputs);
+    }
 }

@@ -9,6 +9,7 @@ public class Neuron {
     public int ID;
     public float SplitX, SplitY;
     public float ActivationResponse;
+    public float value;
 
     public Neuron(InnovationTable.NeuronType type, float x, float y, int id)
     {
@@ -17,6 +18,7 @@ public class Neuron {
         SplitY = y;
         ID = id;
         ActivationResponse = 0;
+        value = 0;
     }
 
 }

@@ -7,6 +7,8 @@ public class InnovationTable {
 
     public enum InnovationType { NewLink, NewNeuron}
 
+    public enum ParentType { A, B }
+
     public struct Innovation
     {
         public InnovationType innovationType;
@@ -42,7 +44,7 @@ public class InnovationTable {
     {
         if (type == InnovationType.NewNeuron)
         {
-            Innovations.Add(new Innovation(type, InnovationNumber + 1, nIN, nOUT, NeuronNumber + 1, NeuronType.hidden));
+            Innovations.Add(new Innovation(type, InnovationNumber + 1, nIN, nOUT, NeuronNumber, NeuronType.hidden));
             NeuronNumber++;
             InnovationNumber++;
             return NeuronNumber;
