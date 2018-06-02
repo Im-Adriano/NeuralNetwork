@@ -21,4 +21,13 @@ public class Neuron {
         value = 0;
     }
 
+    public override bool Equals(object obj)
+    {
+        if(GetType() != obj.GetType())
+        {
+            return false;
+        }
+        Neuron temp = (Neuron)obj;
+        return temp.ID == this.ID;
+    }
 }

@@ -59,7 +59,7 @@ public class Network : MonoBehaviour {
         }
         else
         {
-            int NewInnovationNum = table.CreateNewInnovation(Neuron1, Neuron2, InnovationTable.InnovationType.NewLink);
+            int NewInnovationNum = table.CreateNewInnovation(Neuron1, Neuron2, InnovationTable.InnovationType.NewLink, InnovationTable.NeuronType.none);
             Synapses.Add(new Synapse(Neuron1, Neuron2, 1, NewInnovationNum));
         }
     }
@@ -110,13 +110,13 @@ public class Network : MonoBehaviour {
 
         if(InnovationNum < 0)
         {
-            int newNID = table.CreateNewInnovation(IN, OUT, InnovationTable.InnovationType.NewNeuron);
+            int newNID = table.CreateNewInnovation(IN, OUT, InnovationTable.InnovationType.NewNeuron, InnovationTable.NeuronType.hidden);
             Neurons.Add(newNID, new Neuron(InnovationTable.NeuronType.hidden, newWidth, newDepth, newNID));
 
-            int Link1InnovationNum = table.CreateNewInnovation(IN, newNID, InnovationTable.InnovationType.NewLink);
+            int Link1InnovationNum = table.CreateNewInnovation(IN, newNID, InnovationTable.InnovationType.NewLink, InnovationTable.NeuronType.none);
             Synapses.Add(new Synapse(IN, newNID, 1, Link1InnovationNum));
 
-            int Link2InnovationNum = table.CreateNewInnovation(newNID, OUT, InnovationTable.InnovationType.NewLink);
+            int Link2InnovationNum = table.CreateNewInnovation(newNID, OUT, InnovationTable.InnovationType.NewLink, InnovationTable.NeuronType.none);
             Synapses.Add(new Synapse(newNID, OUT, oldWeight, Link2InnovationNum));
         }
         else
@@ -156,36 +156,60 @@ public class Network : MonoBehaviour {
 
     public float Compute()
     {
-        Queue<Neuron> EvalOrder = new Queue<Neuron>();
-
-        for(int i = 0; i < NumInputs; i++)
+        Queue<Neuron> queue = new Queue<Neuron>();
+        List<Neuron> EvalOrder = new List<Neuron>();
+        float output = 0;
+        for(int i = NumInputs; i < NumInputs + NumOutputs; i++)
         {
-            EvalOrder.Enqueue(Neurons[i]);
+            queue.Enqueue(Neurons[i]);
         }
         
+        while(queue.Count > 0)
+        {
+            Neuron current = queue.Dequeue();
+
+            if (EvalOrder.Contains(current))
+            {
+                EvalOrder.Remove(current);
+            }
+
+            EvalOrder.Insert(0, current);
+
+            for (int k = 0; k < Synapses.Count; k++)
+            {
+                if (Synapses[k].OUT == current.ID)
+                {
+                    queue.Enqueue(Neurons[Synapses[k].IN]);
+                }
+            }
+        }
+
+
         for(int i = 0; i < EvalOrder.Count; i++)
         {
-            Neuron current = EvalOrder.Dequeue();
-            if (current.Type == InnovationTable.NeuronType.hidden)
+            Neuron current = EvalOrder[0];
+            EvalOrder.RemoveAt(0);
+
+            if (current.Type != InnovationTable.NeuronType.input)
             {
                 //sigmoid here
+                current.value = current.value / Mathf.Sqrt(1 + Mathf.Pow(current.value, 2));
             }
            
             for (int k = 0; k < Synapses.Count; k++)
             {
-                if (Synapses[i].IN == current.ID)
+                if (Synapses[k].IN == current.ID)
                 {
-                    Neurons[Synapses[i].OUT].value = current.value * Synapses[i].Weight;
-                    if (Neurons[Synapses[i].OUT].Type != InnovationTable.NeuronType.output)
-                    {
-                        EvalOrder.Enqueue(Neurons[Synapses[i].OUT]);
-                    }
+                    Neurons[Synapses[k].OUT].value = current.value * Synapses[k].Weight;
                 }
             }
-            
+            if(current.Type == InnovationTable.NeuronType.output)
+            {
+                output = current.value;
+            }
         }
-        //eval output here
-        return 0f;
+        
+        return output;
     }
 
     public void Mutate(float mutationRate,int numTrys, InnovationTable table)
@@ -239,6 +263,20 @@ public class Network : MonoBehaviour {
     int NumGenes()
     {
         return Synapses.Count + Neurons.Count - 2;
+    }
+
+    public void CreateInitialNetwork(InnovationTable table)
+    {
+        for (int i = 0; i < NumInputs; i++)
+        {
+            int nID = table.CreateNewInnovation(-1, -1, InnovationTable.InnovationType.NewNeuron, InnovationTable.NeuronType.input);
+            Neurons.Add(nID, new Neuron(InnovationTable.NeuronType.input, 1 / NumInputs, 0, nID));
+        }
+        for (int i = 0; i < NumOutputs; i++)
+        {
+            int nID = table.CreateNewInnovation(-1, -1, InnovationTable.InnovationType.NewNeuron, InnovationTable.NeuronType.output);
+            Neurons.Add(nID, new Neuron(InnovationTable.NeuronType.output, 1 / NumOutputs, 0, nID));
+        }
     }
 
     public static Network Crossover(Network A, Network B)

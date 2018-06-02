@@ -40,7 +40,7 @@ public class InnovationTable {
         NeuronNumber = 0;
     }
 
-    public int CreateNewInnovation(int nIN, int nOUT, InnovationType type)
+    public int CreateNewInnovation(int nIN, int nOUT, InnovationType type, NeuronType nType)
     {
         if (type == InnovationType.NewNeuron)
         {
@@ -55,7 +55,6 @@ public class InnovationTable {
             InnovationNumber++;
             return InnovationNumber;
         }
-        
     }
 
     public int GetInnovationNumber(int nIN, int nOUT, InnovationType type)

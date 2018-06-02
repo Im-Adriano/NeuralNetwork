@@ -6,7 +6,7 @@ public class GeneticAlgorithm : MonoBehaviour {
 
     GameObject[] Cars;
     System.Random random = new System.Random();
-    [Range(2, 100)] public int GenerationSize = 50;
+    [Range(2, 1000)] public int GenerationSize = 50;
     [Range(0, 1000)] public int MaxNumGenerations = 10;
     [Range(2, 10)] public int NumElite;
     [Range(0, 1)] public float PercentMutate;
